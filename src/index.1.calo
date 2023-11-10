@@ -1,0 +1,66 @@
+Ejecutable como documento HTML5
+    con autor allnulled
+    con nombre index
+    con versión 1
+<head>
+    <title>App | Sample 1</title>
+    <meta charset="utf8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="lib/win7/win7.scoped.2.css" />
+    <script src="lib/calo/calo.js"></script>
+    <style>
+      
+    </style>
+</head>
+<body><div id="app"></div></body>.
+
+creo PaginaDeInicio como un componente vue2 con nombre "PaginaDeInicio" con plantilla {
+  <div class="PaginaDeInicio Component">
+    <h5>App | Sample 1</h5>
+    <ul>
+      <li v-for="file, file_index in files" v-bind:key="'file-' + file_index">
+        {{ file }}
+      </li>
+    </ul>
+  </div>
+} con lógica {
+  retorno {
+    método data donde {
+      retorno {
+        files: require("fs").readdirSync(".")
+      }.
+    }.
+  }.
+}.
+
+creo App como una aplicación vue2 con nombre "App" con rutas [{
+  propiedad path como "/".
+  propiedad name como "Home".
+  propiedad component como PaginaDeInicio.
+  propiedad props como {}.
+}] con traducciones {
+  propiedad es como {}.
+  propiedad en como {}.
+  propiedad ca como {}.
+} con plantilla {
+  <div class="App Component Castelog-app">
+    <router-view></router-view>
+  </div>
+} con estilos {
+    html {}
+    body {}
+    .Component {}
+    .App {}
+} con lógica {
+  retorno {
+    método data donde {
+      retorno {
+        
+      }.
+    }.
+    propiedad methods como {}.
+    propiedad watch como {}.
+    método beforeMount donde {}.
+    método mounted donde {}.
+  }.
+} montada en "#app".

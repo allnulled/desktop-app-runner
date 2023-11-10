@@ -1,0 +1,22 @@
+{
+  "name": "desktop-app-runner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.1.html",
+  "window": {
+    "frame": true,
+    "toolbar": false
+  },
+  "scripts": {
+    "start": "node run.js",
+    "start:linux": "./runner/nw/linux/nw .",
+    "start:windows": "./runner/nw/windows/nw.exe .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "allnulled",
+  "license": "WTFPL",
+  "megaupload-link": "https://mega.nz/file/p2sxyCaI#G5HR7zL4KnvybyiRcWYdl2caS8CuL_W8irT6GUav1CE",
+  "dependencies": {
+    "nw-builder": "^4.4.2-beta.4"
+  }
+}
