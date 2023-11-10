@@ -3,32 +3,106 @@ Ejecutable como documento HTML5
     con nombre index
     con versión 1
 <head>
-    <title>App | Sample 1</title>
+    <title>Castelog OS</title>
     <meta charset="utf8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" type="text/css" href="lib/win7/win7.scoped.2.css" />
+    <link rel="stylesheet" type="text/css" href="lib/codemirror/codemirror.css" />
     <script src="lib/calo/calo.js"></script>
+    <script src="lib/calo/castelog.parser.js"></script>
+    <script src="lib/codemirror/codemirror.js"></script>
     <style>
-      
+      /********************************/
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      h5 {
+        background-color: #222;
+        color: white;
+        padding: 8px;
+        margin: 0px;
+        border-bottom: 1px solid #FFF;
+      }
+
+      /********************************/
+      #consola_de_castelog .CodeMirror {
+        font-size: 10px;
+        background-color: #111;
+        color: #0F0;
+        border: 1px solid #111;
+      }
+      #consola_de_castelog .CodeMirror .CodeMirror-gutters {
+        background-color: #333;
+      }
+      #consola_de_castelog .CodeMirror-cursor {
+        border-left: 1px solid yellow;
+      }
+
+      /********************************/
+      #consola_de_salida .CodeMirror {
+        font-size: 10px;
+        background-color: #000;
+        color: #FF0;
+        border: 1px solid #111;
+      }
+      #consola_de_salida .CodeMirror .CodeMirror-gutters {
+        background-color: #333;
+      }
+      #consola_de_salida .CodeMirror-cursor {
+        border-left: 1px solid yellow;
+      }
     </style>
 </head>
 <body><div id="app"></div></body>.
 
 creo PaginaDeInicio como un componente vue2 con nombre "PaginaDeInicio" con plantilla {
   <div class="PaginaDeInicio Component">
-    <h5>App | Sample 1</h5>
-    <ul>
-      <li v-for="file, file_index in files" v-bind:key="'file-' + file_index">
-        {{ file }}
-      </li>
-    </ul>
+    <h5>Consola</h5>
+    <div id="consola_de_castelog">
+      <textarea ref="consola_de_castelog"></textarea>
+    </div>
+    <table>
+      <tr>
+        <td style="width: 100%;">
+          <button style="width: 100%;" v-on:click="() => ejecutar_codigo_castelog()">Ejecutar</button>
+        </td>
+        <td style="width: 1%;">
+          <button v-on:click="() => guardar_codigo_castelog()">Guardar</button>
+        </td>
+      </tr>
+    </table>
+    <div id="consola_de_salida">
+      <textarea ref="consola_de_salida"></textarea>
+    </div>
   </div>
 } con lógica {
   retorno {
+    propiedad props como {
+      propiedad root como Object.
+      propiedad required como true.
+    }.
     método data donde {
       retorno {
-        files: require("fs").readdirSync(".")
+        consola_entrada_codemirror: undefined,
+        consola_salida_codemirror: undefined
       }.
+    }.
+    propiedad methods como {
+      método asíncrono ejecutar_codigo_castelog donde {
+        creo codigo_castelog como this.consola_entrada_codemirror.getValue().
+        creo codigo_js como this.$window.Castelog_parser.parse(codigo_castelog).
+        creo resultado como asíncronamente this.$window.eval("(async () => {const __dirname = process.cwd();" + codigo_js + "})()").
+        creo resultado_json como JSON.stringify(resultado, null, 4).
+        hago this.consola_salida_codemirror.setValue(resultado_json).
+      } en errores hago this.root.gestionar_error(error).
+      método asíncrono guardar_codigo_castelog donde {
+
+      } en errores hago this.root.gestionar_error(error).
+    }.
+    método mounted donde {
+      asigno this.consola_entrada_codemirror como CodeMirror.fromTextArea(this.$refs.consola_de_castelog, { lineNumbers: true }).
+      asigno this.consola_salida_codemirror como CodeMirror.fromTextArea(this.$refs.consola_de_salida, { lineNumbers: true }).
     }.
   }.
 }.
@@ -43,8 +117,13 @@ creo App como una aplicación vue2 con nombre "App" con rutas [{
   propiedad en como {}.
   propiedad ca como {}.
 } con plantilla {
-  <div class="App Component Castelog-app">
-    <router-view></router-view>
+  <div class="App Component Castelog-app win7">
+    <router-view :root="this"></router-view>
+    <div v-if="error">
+      <div>Nombre: {{ error.name }}</div>
+      <div>Mensaje: {{ error.message }}</div>
+      <div>Pila: {{ error.stack }}</div>
+    </div>
   </div>
 } con estilos {
     html {}
@@ -55,10 +134,25 @@ creo App como una aplicación vue2 con nombre "App" con rutas [{
   retorno {
     método data donde {
       retorno {
-        
+        error_id: undefined,
+        error: undefined
       }.
     }.
-    propiedad methods como {}.
+    propiedad methods como {
+      método asíncrono mostrar_error con (error, tiempo o en su defecto 10 * 1000) donde {
+        asigno this.error como error.
+        hago this.$forceUpdate(true).
+        hago clearTimeout(this.error_id).
+        asigno this.error_id como setTimeout(una lambda donde {
+          asigno this.error como undefined.
+          hago this.$forceUpdate(true).
+        }, tiempo).
+      }.
+      método asíncrono gestionar_error con (error) donde {
+        imprimo error.
+        hago this.mostrar_error(error, 10 * 1000).
+      } en errores imprimo error.
+    }.
     propiedad watch como {}.
     método beforeMount donde {}.
     método mounted donde {}.
